@@ -20,6 +20,7 @@ public:
     void setNeightborInfo();
     
     void advance();
+    vector<NeighborInfo> getTileChoicesWithFreq(int col, int row);
     void updateBoardFromMove(CheckPoint * point);
     void validateBoard();
     
@@ -70,6 +71,7 @@ public:
     
     bool autoPlay;
     bool fastForward;
+    bool useFreq;
     
 		
 };

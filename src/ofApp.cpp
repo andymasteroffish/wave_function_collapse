@@ -6,7 +6,9 @@
 void ofApp::setup(){
     autoPlay = false;
     fastForward = false;
+    
     useTileCutter = true;
+    useFreq = true;
     
     tileCutter.setup("full_pic.png");
     
@@ -92,7 +94,6 @@ void ofApp::setSourceFromString(string map){
 //--------------------------------------------------------------
 void ofApp::setNeightborInfo(){
     needToGetNeighborInfo = false;
-    cout<<"get neighbor info"<<endl;
     
     for (int i=0; i<sourceTiles.size(); i++){
         sourceTiles[i].resetNeighborInfo();
@@ -121,23 +122,22 @@ void ofApp::setNeightborInfo(){
             if (x>0){
                 sourceTiles[id].noteNeighbor(3, sourceImage[x-1][y]);
             }
-            
         }
     }
     
-//    for (int i=0; i<sourceTiles.size(); i++){
-//        cout<<endl;
-//        cout<<"TILE "<<i<<endl;
-//        string label [4] = { "North", "East", "South", "West" };
-//        
-//        for (int k=0; k<4; k++){
-//            cout<<"  "<<label[k]<<endl;
-//            for (int j=0; j<sourceTiles[i].neighbors[k].size(); j++){
-//                cout<<"    "<<sourceTiles[i].neighbors[k][j].idNum<<","<<sourceTiles[i].neighbors[k][j].freq<<endl;
-//            }
-//        }
-//        
-//    }
+    
+    //tetsing info
+    string labels[4] = {"North", "East", "South", "West" };
+    for (int i=0; i<sourceTiles.size(); i++){
+        cout<<"tile "<<i<<endl;
+        for (int dir=0; dir<4; dir++){
+            cout<<" "<<labels[dir]<<endl;
+            for (int k=0; k<sourceTiles[i].neighbors[dir].size(); k++){
+                cout<<"  "<<sourceTiles[i].neighbors[dir][k].idNum<<":"<<sourceTiles[i].neighbors[dir][k].freq<<endl;
+            }
+        }
+    }
+    
     
 }
 
@@ -184,10 +184,85 @@ void ofApp::advance(){
     
     //select one at random
     int thisChoice = (int) ofRandom(choices.size());
+    
     //select a tile at random
-    int thisTile = (int) ofRandom(choices[thisChoice].potentialIDs.size());
+    int thisTile = -1;
+    if (!useFreq){
+        thisTile = (int) ofRandom(choices[thisChoice].potentialIDs.size());
+    }
+    //get the frequency of each type of tile for each direction
+    else{
+        vector<NeighborInfo> tileChoices = getTileChoicesWithFreq( choices[thisChoice].x, choices[thisChoice].y );
+        float totalFreq = 0;
+        for (int i=0; i<tileChoices.size(); i++){
+            totalFreq += tileChoices[i].freq;
+        }
+        float roll = ofRandom(totalFreq);
+        
+        for (int i=0; i<tileChoices.size(); i++){
+            roll -= tileChoices[i].freq;
+            if (roll <= 0){
+                thisTile = i;
+                break;
+            }
+        }
+    }
+    
     //make a move
     curMove->move( choices[thisChoice].x, choices[thisChoice].y, choices[thisChoice].potentialIDs[thisTile]);
+    
+}
+
+//--------------------------------------------------------------
+vector<NeighborInfo> ofApp::getTileChoicesWithFreq(int col, int row){
+    vector<NeighborInfo> tileChoices;
+    for (int i=0; i<outputImage[col][row].potentialIDs.size(); i++){
+        NeighborInfo info;
+        info.idNum = outputImage[col][row].potentialIDs[i];
+        info.freq = 1;
+        tileChoices.push_back(info);
+    }
+    
+    //check the tile to our north
+    if (row > 0){
+        if (outputImage[col][row-1].state == STATE_SET){
+            int thisID = outputImage[col][row-1].setID;
+            sourceTiles[thisID].addNeighborFreq(2, tileChoices);
+        }
+    }
+    
+    //check the tile to our east
+    if (col < OUTPUT_COLS-1){
+        if (outputImage[col+1][row].state == STATE_SET){
+            int thisID = outputImage[col+1][row].setID;
+            sourceTiles[thisID].addNeighborFreq(3, tileChoices);
+        }
+    }
+    
+    //check the tile to our south
+    if (row < OUTPUT_ROWS-1){
+        if (outputImage[col][row+1].state == STATE_SET){
+            int thisID = outputImage[col][row+1].setID;
+            sourceTiles[thisID].addNeighborFreq(0, tileChoices);
+        }
+    }
+    
+    //check the tile to our west
+    if (col > 0){
+        if (outputImage[col-1][row].state == STATE_SET){
+            int thisID = outputImage[col-1][row].setID;
+            sourceTiles[thisID].addNeighborFreq(1, tileChoices);
+        }
+    }
+    
+    //testing
+    cout<<"choices "<<tileChoices.size()<<endl;
+    for (int i=0; i<tileChoices.size(); i++){
+        cout<<" tile "<<tileChoices[i].idNum<<" "<<tileChoices[i].freq<<endl;
+    }
+    
+    return tileChoices;
+    
     
 }
 
@@ -315,7 +390,8 @@ void ofApp::draw(){
                 ofSetColor(170);
                 ofDrawRectangle(0, 0, tileSize, tileSize);
                 ofSetColor(0);
-                ofDrawBitmapString( ofToString(outputImage[x][y].potentialIDs.size()), tileSize*0.25, tileSize*0.75);
+                int offsetX = ofToString(outputImage[x][y].potentialIDs.size()).length() == 1 ? tileSize*0.25 : tileSize*0.1;
+                ofDrawBitmapString( ofToString(outputImage[x][y].potentialIDs.size()), offsetX, tileSize*0.75);
             }
             if (outputImage[x][y].state == STATE_SET){
                 ofSetColor(255);
@@ -333,8 +409,10 @@ void ofApp::draw(){
     ofPopMatrix();
     
     ofSetColor(0);
-    ofDrawBitmapString("auto: "+ofToString(autoPlay), 10,ofGetHeight()-50);
-    ofDrawBitmapString("fast: "+ofToString(fastForward), 10,ofGetHeight()-30);
+    string stateText = "auto: "+ofToString(autoPlay);
+    stateText += "\nfast: "+ofToString(fastForward);
+    stateText += "\nuse frequency: "+ofToString(useFreq);
+    ofDrawBitmapString(stateText, 10,ofGetHeight()-70);
     
 }
 
@@ -400,6 +478,9 @@ void ofApp::keyPressed(int key){
     }
     if (key == 'f'){
         fastForward = !fastForward;
+    }
+    if (key == 'q'){
+        useFreq = !useFreq;
     }
     
     if (key == 'r'){
