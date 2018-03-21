@@ -13,6 +13,7 @@ class ofApp : public ofBaseApp{
 
 public:
     void setup();
+    void resizeOutput(int newCols, int newRows);
     void reset();
     void doFirstMove();
     
@@ -50,15 +51,11 @@ public:
     bool needFirstMove;
     bool needToGetNeighborInfo;
     
-    //#define SOURCE_COLS 39
-    // #define SOURCE_ROWS 24
     int sourceCols, sourceRows;
-    //int sourceImage[SOURCE_COLS][SOURCE_ROWS];
     vector< vector<int> > sourceImage;
     
-    #define OUTPUT_COLS 40
-    #define OUTPUT_ROWS 30
-    PotentialTile outputImage[OUTPUT_COLS][OUTPUT_ROWS];
+    int outputCols, outputRows;
+    vector< vector<PotentialTile> > outputImage;
     
     CheckPoint * rootMove;
     CheckPoint * curMove;

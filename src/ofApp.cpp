@@ -10,16 +10,46 @@ void ofApp::setup(){
     useTileCutter = true;
     useFreq = true;
     
+    
+    
     tileCutter.setup("full_pic.png");
     
     rootMove = new CheckPoint(NULL);
     
-    if (true){
+    if (false){
         tileCutter.cut();
         tileCutter.setData(sourceTiles, sourceImage, sourceCols, sourceRows, tileSize);
         reset();
+        resizeOutput(40, 30);
     }
     
+}
+
+//--------------------------------------------------------------
+void ofApp::resizeOutput(int newCols, int newRows){
+    outputCols = MAX(newCols,2);
+    outputRows = MAX(newRows,2);
+    
+    for (int i=0; i<outputImage.size(); i++){
+        outputImage[i].clear();
+    }
+    outputImage.clear();
+    
+    outputImage.resize(newCols);
+    for (int i=0; i<outputImage.size(); i++){
+        outputImage[i].resize(newRows);
+    }
+    
+    
+    int newScreenW = tileSize*(sourceCols+1) + tileSize*(outputCols+1);
+    int newScreenH =  MAX(uniqueButtons[uniqueButtons.size()-1].box.y+tileSize*2, tileSize*(outputRows+1));
+    cout<<"h "<<newScreenH<<endl;
+    
+    ofSetWindowShape(newScreenW, newScreenH);
+    
+    resetOutput();
+    needToGetNeighborInfo = true;
+    needFirstMove = true;
 }
 
 //--------------------------------------------------------------
@@ -57,7 +87,7 @@ void ofApp::doFirstMove(){
     //start us off
     rootMove->prune();
     curMove = new CheckPoint(rootMove);
-    curMove->move(ofRandom(OUTPUT_COLS), ofRandom(OUTPUT_ROWS), ofRandom(sourceTiles.size())) ;
+    curMove->move(ofRandom(outputCols), ofRandom(outputRows), ofRandom(sourceTiles.size())) ;
     updateBoardFromMove(curMove);
 }
 
@@ -159,8 +189,8 @@ void ofApp::advance(){
     
     //make a list of the active potential tiels with the fewest posibilits
     int lowVal = sourceTiles.size()+1;
-    for (int x=0; x<OUTPUT_COLS; x++){
-        for (int y=0; y<OUTPUT_ROWS; y++){
+    for (int x=0; x<outputCols; x++){
+        for (int y=0; y<outputRows; y++){
             if (outputImage[x][y].state == STATE_ACTIVE && outputImage[x][y].potentialIDs.size() < lowVal){
                 lowVal = outputImage[x][y].potentialIDs.size();
             }
@@ -168,8 +198,8 @@ void ofApp::advance(){
     }
     
     vector<PotentialTile> choices;
-    for (int x=0; x<OUTPUT_COLS; x++){
-        for (int y=0; y<OUTPUT_ROWS; y++){
+    for (int x=0; x<outputCols; x++){
+        for (int y=0; y<outputRows; y++){
             if (outputImage[x][y].state == STATE_ACTIVE && outputImage[x][y].potentialIDs.size() == lowVal){
                 choices.push_back(outputImage[x][y]);
             }
@@ -232,7 +262,7 @@ vector<NeighborInfo> ofApp::getTileChoicesWithFreq(int col, int row){
     }
     
     //check the tile to our east
-    if (col < OUTPUT_COLS-1){
+    if (col < outputCols-1){
         if (outputImage[col+1][row].state == STATE_SET){
             int thisID = outputImage[col+1][row].setID;
             sourceTiles[thisID].addNeighborFreq(3, tileChoices);
@@ -240,7 +270,7 @@ vector<NeighborInfo> ofApp::getTileChoicesWithFreq(int col, int row){
     }
     
     //check the tile to our south
-    if (row < OUTPUT_ROWS-1){
+    if (row < outputRows-1){
         if (outputImage[col][row+1].state == STATE_SET){
             int thisID = outputImage[col][row+1].setID;
             sourceTiles[thisID].addNeighborFreq(0, tileChoices);
@@ -293,12 +323,12 @@ void ofApp::updateBoardFromMove(CheckPoint * point){
     }
     
     //east
-    if (move.col < OUTPUT_COLS-1){
+    if (move.col < outputCols-1){
         outputImage[move.col+1][move.row].ruleOutBasedOnNeightbor( sourceTiles[outputImage[move.col][move.row].setID], 1);
     }
     
     //south
-    if (move.row < OUTPUT_ROWS-1){
+    if (move.row < outputRows-1){
         outputImage[move.col][move.row+1].ruleOutBasedOnNeightbor( sourceTiles[outputImage[move.col][move.row].setID], 2);
     }
     
@@ -315,8 +345,8 @@ void ofApp::updateBoardFromMove(CheckPoint * point){
 //if any potential tiles have no options, this move is dirt!
 void ofApp::validateBoard(){
     bool boardIsValid = true;
-    for (int x=0; x<OUTPUT_COLS; x++){
-        for (int y=0; y<OUTPUT_ROWS; y++){
+    for (int x=0; x<outputCols; x++){
+        for (int y=0; y<outputRows; y++){
             if (outputImage[x][y].state == STATE_ACTIVE && outputImage[x][y].potentialIDs.size() == 0){
                 cout<<x<<","<<y<<" is no good!"<<endl;
                 boardIsValid = false;
@@ -375,8 +405,8 @@ void ofApp::draw(){
     //output
     ofPushMatrix();
     ofTranslate(sourceCols*tileSize+tileSize, 0);
-    for (int x=0; x<OUTPUT_COLS; x++){
-        for (int y=0; y<OUTPUT_ROWS; y++){
+    for (int x=0; x<outputCols; x++){
+        for (int y=0; y<outputRows; y++){
             
             ofPushMatrix();
             ofTranslate(x*tileSize, y*tileSize);
@@ -412,14 +442,14 @@ void ofApp::draw(){
     string stateText = "auto: "+ofToString(autoPlay);
     stateText += "\nfast: "+ofToString(fastForward);
     stateText += "\nuse frequency: "+ofToString(useFreq);
-    ofDrawBitmapString(stateText, 10,ofGetHeight()-70);
+    ofDrawBitmapString(stateText, 10,ofGetHeight()-30);
     
 }
 
 //--------------------------------------------------------------
 void ofApp::resetOutput(){
-    for (int x=0; x<OUTPUT_COLS; x++){
-        for (int y=0; y<OUTPUT_ROWS; y++){
+    for (int x=0; x<outputCols; x++){
+        for (int y=0; y<outputRows; y++){
             outputImage[x][y].reset(sourceTiles.size(), x, y);
         }
     }
@@ -459,6 +489,7 @@ void ofApp::keyPressed(int key){
             tileCutter.cut();
             tileCutter.setData(sourceTiles, sourceImage, sourceCols, sourceRows, tileSize);
             reset();
+            resizeOutput(40, 30);
         }
         return;
     }
@@ -485,6 +516,20 @@ void ofApp::keyPressed(int key){
     
     if (key == 'r'){
         resetOutput();
+    }
+    
+    //resizing the canvas
+    if (key == OF_KEY_UP){
+        resizeOutput(outputCols, outputRows-1);
+    }
+    if (key == OF_KEY_DOWN){
+        resizeOutput(outputCols, outputRows+1);
+    }
+    if (key == OF_KEY_LEFT){
+        resizeOutput(outputCols-1, outputRows);
+    }
+    if (key == OF_KEY_RIGHT){
+        resizeOutput(outputCols+1, outputRows);
     }
 
 }
