@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		573E3EB32062931F0099F17E /* TileCutter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 573E3EB12062931F0099F17E /* TileCutter.cpp */; };
 		57FB634A206173B000279F06 /* PotentialTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57FB6348206173B000279F06 /* PotentialTile.cpp */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */; };
@@ -43,6 +44,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		573E3EB12062931F0099F17E /* TileCutter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TileCutter.cpp; sourceTree = "<group>"; };
+		573E3EB22062931F0099F17E /* TileCutter.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TileCutter.hpp; sourceTree = "<group>"; };
+		573E3EB4206293290099F17E /* TileInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TileInfo.h; sourceTree = "<group>"; };
 		57FB63472060868C00279F06 /* Tile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tile.h; sourceTree = "<group>"; };
 		57FB6348206173B000279F06 /* PotentialTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PotentialTile.cpp; sourceTree = "<group>"; };
 		57FB6349206173B000279F06 /* PotentialTile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PotentialTile.hpp; sourceTree = "<group>"; };
@@ -114,6 +118,9 @@
 				57FB6349206173B000279F06 /* PotentialTile.hpp */,
 				57FB6348206173B000279F06 /* PotentialTile.cpp */,
 				57FB634B206175F600279F06 /* CheckPoint.h */,
+				573E3EB22062931F0099F17E /* TileCutter.hpp */,
+				573E3EB12062931F0099F17E /* TileCutter.cpp */,
+				573E3EB4206293290099F17E /* TileInfo.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -214,6 +221,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				573E3EB32062931F0099F17E /* TileCutter.cpp in Sources */,
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				57FB634A206173B000279F06 /* PotentialTile.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,

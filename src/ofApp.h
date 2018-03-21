@@ -6,10 +6,13 @@
 #include "PotentialTile.hpp"
 #include "CheckPoint.h"
 
+#include "TileCutter.hpp"
+
 class ofApp : public ofBaseApp{
 
 public:
     void setup();
+    void reset();
     void doFirstMove();
     
     void setSourceFromString(string map);
@@ -40,9 +43,11 @@ public:
     int tileSize;
     vector<Tile> sourceTiles;
     
-    #define SOURCE_COLS 39
-    #define SOURCE_ROWS 24
-    int sourceImage[SOURCE_COLS][SOURCE_ROWS];
+    //#define SOURCE_COLS 39
+    // #define SOURCE_ROWS 24
+    int sourceCols, sourceRows;
+    //int sourceImage[SOURCE_COLS][SOURCE_ROWS];
+    vector< vector<int> > sourceImage;
     
     #define OUTPUT_COLS 40
     #define OUTPUT_ROWS 30
@@ -51,8 +56,11 @@ public:
     CheckPoint * rootMove;
     CheckPoint * curMove;
     
+    TileCutter tileCutter;
+    bool useTileCutter;
     
     bool autoPlay;
     bool fastForward;
+    
 		
 };

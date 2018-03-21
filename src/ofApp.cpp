@@ -4,8 +4,15 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    autoPlay = true;
-    fastForward = true;
+    autoPlay = false;
+    fastForward = false;
+    useTileCutter = true;
+    
+    tileCutter.setup("full_pic.png");
+    
+    rootMove = new CheckPoint(NULL);
+    
+    /*
     
     //load in the tiles
     for (int i=0; i<90; i++){
@@ -56,7 +63,15 @@ void ofApp::setup(){
     
     resetOutput();
     doFirstMove();
+     */
     
+}
+
+//--------------------------------------------------------------
+void ofApp::reset(){
+    setNeightborInfo();
+    resetOutput();
+    doFirstMove();
 }
 
 //--------------------------------------------------------------
@@ -91,7 +106,7 @@ void ofApp::setSourceFromString(string map){
             
             int idNum = ofToInt(numString);
             //cout<<curX<<","<<curY<<" id: "<<idNum<<endl;
-            if (curX < SOURCE_COLS){    //my source image was fucked up so I'm getting rid of the last column
+            if (curX < sourceCols){    //my source image was fucked up so I'm getting rid of the last column
                 sourceImage[curX][curY] = idNum;
             }
         }
@@ -104,8 +119,8 @@ void ofApp::setNeightborInfo(){
         sourceTiles[i].resetNeighborInfo();
     }
     
-    for (int x=0; x<SOURCE_COLS; x++){
-        for (int y=0; y<SOURCE_ROWS; y++){
+    for (int x=0; x<sourceCols; x++){
+        for (int y=0; y<sourceRows; y++){
             int id = sourceImage[x][y];
             
             //check to the north
@@ -114,12 +129,12 @@ void ofApp::setNeightborInfo(){
             }
             
             //check to the east
-            if (x<SOURCE_COLS-1){
+            if (x<sourceCols-1){
                 sourceTiles[id].noteNeighbor(1, sourceImage[x+1][y]);
             }
             
             //check to the south
-            if (y<SOURCE_ROWS-1){
+            if (y<sourceRows-1){
                 sourceTiles[id].noteNeighbor(2, sourceImage[x][y+1]);
             }
             
@@ -256,6 +271,10 @@ void ofApp::validateBoard(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    if (useTileCutter && !tileCutter.ready){
+        return;
+    }
+    
     if (autoPlay){
         int cycles = 1;
         if (fastForward){
@@ -270,16 +289,23 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    if (useTileCutter && !tileCutter.ready){
+        ofPushMatrix();
+        ofTranslate(5, 5);
+        tileCutter.draw();
+        ofPopMatrix();
+        return;
+    }
     
     ofSetColor(255);
-    for (int x=0; x<SOURCE_COLS; x++){
-        for (int y=0; y<SOURCE_ROWS; y++){
+    for (int x=0; x<sourceCols; x++){
+        for (int y=0; y<sourceRows; y++){
             sourceTiles[ sourceImage[x][y] ].pic.draw( x*tileSize, y*tileSize);
         }
     }
 
     ofPushMatrix();
-    ofTranslate(SOURCE_COLS*tileSize+tileSize, 0);
+    ofTranslate(sourceCols*tileSize+tileSize, 0);
     for (int x=0; x<OUTPUT_COLS; x++){
         for (int y=0; y<OUTPUT_ROWS; y++){
             
@@ -325,8 +351,6 @@ void ofApp::resetOutput(){
             outputImage[x][y].reset(sourceTiles.size(), x, y);
         }
     }
-    
-    
 }
 
 //--------------------------------------------------------------
@@ -351,6 +375,21 @@ void ofApp::revertToCheckPoint(CheckPoint * point){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
+    //tile cutter commands
+    if (useTileCutter && !tileCutter.ready){
+        if (key == OF_KEY_UP){
+            tileCutter.adjustTileSize(1);
+        }
+        if (key == OF_KEY_DOWN){
+            tileCutter.adjustTileSize(-1);
+        }
+        if (key == OF_KEY_RETURN){
+            tileCutter.cut();
+            tileCutter.setData(sourceTiles, sourceImage, sourceCols, sourceRows, tileSize);
+            reset();
+        }
+        return;
+    }
     
     if (key == ' '){
         advance();
