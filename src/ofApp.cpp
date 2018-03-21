@@ -12,58 +12,11 @@ void ofApp::setup(){
     
     rootMove = new CheckPoint(NULL);
     
-    /*
-    
-    //load in the tiles
-    for (int i=0; i<90; i++){
-        Tile tile;
-        tile.pic.load("tiles/tile_"+ofToString(i)+".png");
-        tile.idNum = i;
-        sourceTiles.push_back(tile);
+    if (true){
+        tileCutter.cut();
+        tileCutter.setData(sourceTiles, sourceImage, sourceCols, sourceRows, tileSize);
+        reset();
     }
-    
-    tileSize = sourceTiles[0].pic.getWidth();
-    
-    string map = "";
-    map+="0,0,0,0,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,\n";
-    map+="3,3,4,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,5,6,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,7,\n";
-    map+="3,8,4,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,5,6,9,10,2,2,2,2,2,2,2,2,2,2,2,2,11,2,2,2,12,\n";
-    map+="3,3,4,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,13,14,13,14,2,15,16,17,5,6,2,2,2,2,2,2,18,2,2,11,19,\n";
-    map+="19,20,19,21,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,22,23,22,23,2,24,25,26,9,10,2,2,2,2,2,2,18,2,2,18,27,\n";
-    map+="27,27,27,28,2,2,2,2,2,2,2,2,2,2,2,2,2,2,29,20,19,20,19,21,30,31,32,22,23,2,2,2,2,2,2,33,2,2,33,27,\n";
-    map+="27,27,27,34,2,2,2,2,2,2,2,2,35,36,2,2,2,2,37,27,27,27,27,28,19,19,19,20,19,21,2,2,2,2,38,39,40,38,41,42,\n";
-    map+="27,27,34,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,43,27,27,27,27,27,27,27,27,27,27,28,2,2,44,38,45,46,40,47,45,2,\n";
-    map+="43,34,2,2,2,2,2,48,49,2,2,2,2,2,2,2,2,2,2,43,42,27,27,27,27,42,42,42,42,34,2,2,35,50,46,2,40,2,47,2,\n";
-    map+="2,2,2,2,2,29,20,19,20,19,21,2,2,2,2,2,2,2,2,2,2,37,27,27,28,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,\n";
-    
-    
-    map+="2,2,2,2,2,43,27,27,27,42,34,2,2,2,2,2,2,2,2,2,2,43,42,42,34,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,\n";
-    map+="2,2,2,2,2,2,43,42,34,2,2,2,2,2,35,36,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,51,2,2,2,2,2,\n";
-    map+="2,2,2,2,2,2,2,2,2,2,2,2,52,53,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,54,55,56,2,2,2,2,\n";
-    map+="2,2,2,2,2,2,2,2,2,2,2,57,58,59,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,60,61,62,54,56,2,2,\n";
-    map+="2,2,2,2,2,2,2,2,2,2,29,19,20,21,2,2,2,2,2,2,2,2,2,2,52,53,2,2,2,2,2,2,2,63,64,65,63,65,2,2,\n";
-    map+="2,2,2,2,66,2,35,36,2,2,43,42,42,34,2,2,2,2,2,2,2,2,2,2,67,68,2,52,53,2,2,2,29,20,19,20,19,20,19,2,\n";
-    map+="2,2,2,2,69,57,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,58,59,70,58,59,2,2,2,37,27,27,27,27,27,27,2,\n";
-    map+="2,2,2,2,29,19,21,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,71,72,73,71,72,70,2,51,37,27,27,27,27,27,27,2,\n";
-    map+="2,74,2,2,43,42,34,2,2,2,2,75,76,2,2,2,2,2,2,2,2,2,2,2,29,20,19,20,19,21,77,78,37,27,27,27,27,27,27,2,\n";
-    map+="2,79,74,2,2,2,2,2,74,29,20,19,21,2,2,2,2,2,75,76,2,2,2,2,37,27,27,27,27,28,2,2,37,27,27,27,27,27,27,2,\n";
-    
-    map+="2,80,79,2,2,2,81,2,80,37,27,27,28,2,70,2,81,2,29,21,2,2,82,83,37,27,27,27,27,28,2,2,37,27,27,27,27,27,27,84,\n";
-    map+="84,84,85,84,84,84,84,85,84,37,27,27,28,84,86,84,84,84,37,28,85,84,87,88,37,27,27,27,27,28,84,84,37,27,27,27,27,27,27,89,\n";
-    map+="89,89,89,89,89,89,89,89,89,37,27,27,28,89,89,89,89,89,37,28,89,89,89,89,37,27,27,27,27,28,89,89,37,27,27,27,27,27,27,89,\n";
-    map+="89,89,89,89,89,89,89,89,89,37,27,27,28,89,89,89,89,89,37,28,89,89,89,89,37,27,27,27,27,28,89,89,37,27,27,27,27,27,27,\n";
-     
-    
-    setSourceFromString(map);
-
-    setNeightborInfo();
-    
-    
-    rootMove = new CheckPoint(NULL);
-    
-    resetOutput();
-    doFirstMove();
-     */
     
 }
 
@@ -71,11 +24,34 @@ void ofApp::setup(){
 void ofApp::reset(){
     setNeightborInfo();
     resetOutput();
-    doFirstMove();
+    //doFirstMove();
+    
+    uniqueButtons.clear();
+    int spacing = 2;
+    int curX = spacing;
+    int curY = (sourceRows+2)*tileSize + spacing;
+    for (int i=0; i<sourceTiles.size(); i++){
+        UniqueTileButton button;
+        if (curX + tileSize+spacing > sourceCols*tileSize ){
+            curY += tileSize+spacing;
+            curX = spacing;
+        }
+        //cout<<i<<": "<<curX<<","<<curY<<endl;
+        button.setup(curX, curY, tileSize, i);
+        curX += tileSize + spacing;
+        uniqueButtons.push_back(button);
+    }
+    
+    
+    curSelectedButton = 0;
+    
+    needFirstMove = true;
 }
 
 //--------------------------------------------------------------
 void ofApp::doFirstMove(){
+    cout<<"do it"<<endl;
+    needFirstMove = false;
     //start us off
     rootMove->prune();
     curMove = new CheckPoint(rootMove);
@@ -115,6 +91,9 @@ void ofApp::setSourceFromString(string map){
 
 //--------------------------------------------------------------
 void ofApp::setNeightborInfo(){
+    needToGetNeighborInfo = false;
+    cout<<"get neighbor info"<<endl;
+    
     for (int i=0; i<sourceTiles.size(); i++){
         sourceTiles[i].resetNeighborInfo();
     }
@@ -164,6 +143,14 @@ void ofApp::setNeightborInfo(){
 
 //--------------------------------------------------------------
 void ofApp::advance(){
+    if (needToGetNeighborInfo){
+        setNeightborInfo();
+    }
+    if (needFirstMove){
+        doFirstMove();
+        return;
+    }
+    
     //cout<<"advance"<<endl;
     CheckPoint * oldMove = curMove;
     curMove = new CheckPoint(oldMove);
@@ -297,6 +284,7 @@ void ofApp::draw(){
         return;
     }
     
+    //sourc eimage
     ofSetColor(255);
     for (int x=0; x<sourceCols; x++){
         for (int y=0; y<sourceRows; y++){
@@ -304,6 +292,12 @@ void ofApp::draw(){
         }
     }
 
+    //unique tiles
+    for (int i=0; i<uniqueButtons.size(); i++){
+        uniqueButtons[i].draw(sourceTiles[uniqueButtons[i].idNum].pic, curSelectedButton==i);
+    }
+    
+    //output
     ofPushMatrix();
     ofTranslate(sourceCols*tileSize+tileSize, 0);
     for (int x=0; x<OUTPUT_COLS; x++){
@@ -410,7 +404,6 @@ void ofApp::keyPressed(int key){
     
     if (key == 'r'){
         resetOutput();
-        doFirstMove();
     }
 
 }
@@ -427,11 +420,26 @@ void ofApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-
+    if (x < sourceCols*tileSize && y <sourceRows*tileSize){
+        int col = x/tileSize;
+        int row = y/tileSize;
+        drawOnSourceImage(col, row, curSelectedButton);
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
+    for (int i=0; i<uniqueButtons.size(); i++){
+        if (uniqueButtons[i].checkClick(x, y)){
+            curSelectedButton = i;
+        }
+    }
+    
+    if (x < sourceCols*tileSize && y <sourceRows*tileSize){
+        int col = x/tileSize;
+        int row = y/tileSize;
+        drawOnSourceImage(col, row, curSelectedButton);
+    }
 
 }
 
@@ -463,4 +471,14 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
+}
+
+//--------------------------------------------------------------
+void ofApp::drawOnSourceImage(int x, int y, int newID){
+    sourceImage[x][y] = newID;
+    needToGetNeighborInfo = true;
+    if (!needFirstMove){
+        resetOutput();
+        needFirstMove = true;
+    }
 }

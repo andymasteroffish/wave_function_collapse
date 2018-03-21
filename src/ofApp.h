@@ -7,6 +7,7 @@
 #include "CheckPoint.h"
 
 #include "TileCutter.hpp"
+#include "UniqueTileButton.h"
 
 class ofApp : public ofBaseApp{
 
@@ -40,8 +41,13 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
+    void drawOnSourceImage(int x, int y, int newID);
+    
     int tileSize;
     vector<Tile> sourceTiles;
+    
+    bool needFirstMove;
+    bool needToGetNeighborInfo;
     
     //#define SOURCE_COLS 39
     // #define SOURCE_ROWS 24
@@ -58,6 +64,9 @@ public:
     
     TileCutter tileCutter;
     bool useTileCutter;
+    
+    vector<UniqueTileButton> uniqueButtons;
+    int curSelectedButton;
     
     bool autoPlay;
     bool fastForward;

@@ -47,6 +47,7 @@
 		573E3EB12062931F0099F17E /* TileCutter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TileCutter.cpp; sourceTree = "<group>"; };
 		573E3EB22062931F0099F17E /* TileCutter.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = TileCutter.hpp; sourceTree = "<group>"; };
 		573E3EB4206293290099F17E /* TileInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TileInfo.h; sourceTree = "<group>"; };
+		573E3EB520629C050099F17E /* UniqueTileButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UniqueTileButton.h; sourceTree = "<group>"; };
 		57FB63472060868C00279F06 /* Tile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tile.h; sourceTree = "<group>"; };
 		57FB6348206173B000279F06 /* PotentialTile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PotentialTile.cpp; sourceTree = "<group>"; };
 		57FB6349206173B000279F06 /* PotentialTile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PotentialTile.hpp; sourceTree = "<group>"; };
@@ -121,6 +122,7 @@
 				573E3EB22062931F0099F17E /* TileCutter.hpp */,
 				573E3EB12062931F0099F17E /* TileCutter.cpp */,
 				573E3EB4206293290099F17E /* TileInfo.h */,
+				573E3EB520629C050099F17E /* UniqueTileButton.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
