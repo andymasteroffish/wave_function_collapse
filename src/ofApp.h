@@ -50,6 +50,7 @@ public:
     
     bool needFirstMove;
     bool needToGetNeighborInfo;
+    bool isDone;
     
     int sourceCols, sourceRows;
     vector< vector<int> > sourceImage;
@@ -69,6 +70,7 @@ public:
     bool autoPlay;
     bool fastForward;
     bool useFreq;
+    float freqWeight;
     
 		
 };

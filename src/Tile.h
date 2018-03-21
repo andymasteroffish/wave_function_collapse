@@ -13,7 +13,7 @@
 class NeighborInfo{
 public:
     int idNum;
-    int freq;
+    float freq;
 };
 
 class Tile{

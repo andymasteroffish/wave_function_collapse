@@ -9,10 +9,10 @@ void ofApp::setup(){
     
     useTileCutter = true;
     useFreq = true;
+    freqWeight = 1.0f;
     
     
-    
-    tileCutter.setup("full_pic.png");
+    tileCutter.setup("blowharder.png");
     
     rootMove = new CheckPoint(NULL);
     
@@ -20,7 +20,7 @@ void ofApp::setup(){
         tileCutter.cut();
         tileCutter.setData(sourceTiles, sourceImage, sourceCols, sourceRows, tileSize);
         reset();
-        resizeOutput(40, 30);
+        resizeOutput(10, 8);
     }
     
 }
@@ -41,11 +41,10 @@ void ofApp::resizeOutput(int newCols, int newRows){
     }
     
     
-    int newScreenW = tileSize*(sourceCols+1) + tileSize*(outputCols+1);
-    int newScreenH =  MAX(uniqueButtons[uniqueButtons.size()-1].box.y+tileSize*2, tileSize*(outputRows+1));
-    cout<<"h "<<newScreenH<<endl;
-    
-    ofSetWindowShape(newScreenW, newScreenH);
+//    int newScreenW = tileSize*(sourceCols+1) + tileSize*(outputCols+1);
+//    int newScreenH =  MAX(uniqueButtons[uniqueButtons.size()-1].box.y+tileSize*2, tileSize*(outputRows+1));
+//    cout<<"h "<<newScreenH<<endl;
+//    ofSetWindowShape(newScreenW, newScreenH);
     
     resetOutput();
     needToGetNeighborInfo = true;
@@ -76,13 +75,21 @@ void ofApp::reset(){
     
     
     curSelectedButton = 0;
-    
-    needFirstMove = true;
+}
+
+//--------------------------------------------------------------
+void ofApp::resetOutput(){
+    for (int x=0; x<outputCols; x++){
+        for (int y=0; y<outputRows; y++){
+            outputImage[x][y].reset(sourceTiles.size(), x, y);
+        }
+    }
+    isDone = false;
 }
 
 //--------------------------------------------------------------
 void ofApp::doFirstMove(){
-    cout<<"do it"<<endl;
+    cout<<"make first move"<<endl;
     needFirstMove = false;
     //start us off
     rootMove->prune();
@@ -173,6 +180,10 @@ void ofApp::setNeightborInfo(){
 
 //--------------------------------------------------------------
 void ofApp::advance(){
+    if (isDone){
+        return;
+    }
+    
     if (needToGetNeighborInfo){
         setNeightborInfo();
     }
@@ -208,7 +219,7 @@ void ofApp::advance(){
     
     if (choices.size() == 0){
         cout<<"all done!"<<endl;
-        autoPlay = false;
+        isDone = true;
         return;
     }
     
@@ -249,7 +260,7 @@ vector<NeighborInfo> ofApp::getTileChoicesWithFreq(int col, int row){
     for (int i=0; i<outputImage[col][row].potentialIDs.size(); i++){
         NeighborInfo info;
         info.idNum = outputImage[col][row].potentialIDs[i];
-        info.freq = 1;
+        info.freq = 0;
         tileChoices.push_back(info);
     }
     
@@ -277,6 +288,12 @@ vector<NeighborInfo> ofApp::getTileChoicesWithFreq(int col, int row){
         }
     }
     
+    //multiply them bu the weight and then give them all at least 1 frequency
+     for (int i=0; i<tileChoices.size(); i++){
+         tileChoices[i].freq *= freqWeight;
+         tileChoices[i].freq += 1;
+     }
+    
     //check the tile to our west
     if (col > 0){
         if (outputImage[col-1][row].state == STATE_SET){
@@ -286,10 +303,10 @@ vector<NeighborInfo> ofApp::getTileChoicesWithFreq(int col, int row){
     }
     
     //testing
-    cout<<"choices "<<tileChoices.size()<<endl;
-    for (int i=0; i<tileChoices.size(); i++){
-        cout<<" tile "<<tileChoices[i].idNum<<" "<<tileChoices[i].freq<<endl;
-    }
+//    cout<<"choices "<<tileChoices.size()<<endl;
+//    for (int i=0; i<tileChoices.size(); i++){
+//        cout<<" tile "<<tileChoices[i].idNum<<" "<<tileChoices[i].freq<<endl;
+//    }
     
     return tileChoices;
     
@@ -298,6 +315,9 @@ vector<NeighborInfo> ofApp::getTileChoicesWithFreq(int col, int row){
 
 //--------------------------------------------------------------
 void ofApp::updateBoardFromMove(CheckPoint * point){
+    if (isDone){
+        return;
+    }
     //cout<<"update board"<<endl;
     MoveInfo move = point->thisMove;
     if (move.col == -1){
@@ -377,6 +397,8 @@ void ofApp::update(){
             updateBoardFromMove(curMove);
         }
     }
+    
+    //cout<<"need "<<needFirstMove<<endl;
 }
 
 //--------------------------------------------------------------
@@ -405,6 +427,7 @@ void ofApp::draw(){
     //output
     ofPushMatrix();
     ofTranslate(sourceCols*tileSize+tileSize, 0);
+    //ofTranslate(0, (sourceRows+4)*tileSize);
     for (int x=0; x<outputCols; x++){
         for (int y=0; y<outputRows; y++){
             
@@ -441,24 +464,19 @@ void ofApp::draw(){
     ofSetColor(0);
     string stateText = "auto: "+ofToString(autoPlay);
     stateText += "\nfast: "+ofToString(fastForward);
-    stateText += "\nuse frequency: "+ofToString(useFreq);
+    stateText += "\nfrequency weight: "+ofToString(freqWeight);
     ofDrawBitmapString(stateText, 10,ofGetHeight()-30);
     
-}
-
-//--------------------------------------------------------------
-void ofApp::resetOutput(){
-    for (int x=0; x<outputCols; x++){
-        for (int y=0; y<outputRows; y++){
-            outputImage[x][y].reset(sourceTiles.size(), x, y);
-        }
-    }
 }
 
 //--------------------------------------------------------------
 void ofApp::revertToCheckPoint(CheckPoint * point){
     cout<<"REVERT to "<<point->getDepth()<<endl;
     resetOutput();
+    
+    if (point->getDepth() == 0){
+        needFirstMove = true;
+    }
     
     curMove = rootMove;
     //int steps =0;
@@ -489,7 +507,7 @@ void ofApp::keyPressed(int key){
             tileCutter.cut();
             tileCutter.setData(sourceTiles, sourceImage, sourceCols, sourceRows, tileSize);
             reset();
-            resizeOutput(40, 30);
+            resizeOutput(30, 20);
         }
         return;
     }
@@ -510,12 +528,22 @@ void ofApp::keyPressed(int key){
     if (key == 'f'){
         fastForward = !fastForward;
     }
-    if (key == 'q'){
-        useFreq = !useFreq;
-    }
+    
     
     if (key == 'r'){
         resetOutput();
+        needFirstMove = true;
+    }
+    
+    //frequency
+    if (key == 'q'){
+        useFreq = !useFreq;
+    }
+    if (key == '-' && freqWeight > 0){
+        freqWeight -= 0.1f;
+    }
+    if (key == '+'){
+        freqWeight += 0.1f;
     }
     
     //resizing the canvas

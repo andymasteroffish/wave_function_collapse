@@ -7,3 +7,16 @@ using tiles;
 
 Simple NES-like Platformer Tiles by surt
 https://opengameart.org/content/simple-nes-like-platformer-tiles
+
+Simple broad-purpose tileset by surt
+https://opengameart.org/content/simple-broad-purpose-tileset
+
+Generic Platformer Tiles by surt
+https://opengameart.org/content/generic-platformer-tiles
+
+Blowhard 2: Blow Harder by surt
+https://opengameart.org/content/blowhard-2-blow-harder
+
+Overworld tiles by Buch
+https://opengameart.org/content/overworld-tiles-0
+
