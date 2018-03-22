@@ -1,7 +1,10 @@
 # wave_function_collapse
 written in of 0.9.8 for mac
 
-Based on https://trasevol.dog/2017/09/01/di19/
+Using the Wave FUnciton Collapse algorythm by mxgmn
+https://github.com/mxgmn/WaveFunctionCollapse
+
+Based on this article https://trasevol.dog/2017/09/01/di19/
 
 using tiles;
 
