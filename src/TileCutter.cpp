@@ -14,6 +14,9 @@ void TileCutter::setup(string file){
     
     tileSize = 16;
     adjustTileSize(0);
+    
+    allTiles.clear();
+    uniqueTiles.clear();
    
     
     ready = false;
@@ -97,7 +100,6 @@ void TileCutter::draw(){
 
 
 void TileCutter::setData(vector<Tile> &sourceTiles, vector<vector<int>> &sourceImage, int &sourceCols, int &sourceRows, int &_tileSize){
-    
     //source tiles
     sourceTiles.clear();
     for (int i=0; i<uniqueTiles.size(); i++){

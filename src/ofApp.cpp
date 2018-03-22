@@ -9,10 +9,11 @@ void ofApp::setup(){
     
     useTileCutter = true;
     useFreq = true;
-    freqWeight = 1.0f;
+    freqWeight = 0.6f;
     
+    ofSetBackgroundColor(240);
     
-    tileCutter.setup("blowharder.png");
+    tileCutter.setup("simples_pimples_cut.png");
     
     rootMove = new CheckPoint(NULL);
     
@@ -390,7 +391,7 @@ void ofApp::update(){
     if (autoPlay){
         int cycles = 1;
         if (fastForward){
-            cycles = 30;
+            cycles = 20;
         }
         for (int i=0; i<cycles; i++){
             advance();
@@ -443,7 +444,7 @@ void ofApp::draw(){
                 ofSetColor(170);
                 ofDrawRectangle(0, 0, tileSize, tileSize);
                 ofSetColor(0);
-                int offsetX = ofToString(outputImage[x][y].potentialIDs.size()).length() == 1 ? tileSize*0.25 : tileSize*0.1;
+                int offsetX = ofToString(outputImage[x][y].potentialIDs.size()).length() == 1 ? tileSize*0.25 : tileSize*0.05;
                 ofDrawBitmapString( ofToString(outputImage[x][y].potentialIDs.size()), offsetX, tileSize*0.75);
             }
             if (outputImage[x][y].state == STATE_SET){
@@ -623,7 +624,10 @@ void ofApp::gotMessage(ofMessage msg){
 }
 
 //--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
+void ofApp::dragEvent(ofDragInfo dragInfo){
+    
+    cout<<dragInfo.files[0]<<endl;
+    tileCutter.setup(dragInfo.files[0]);
 
 }
 
