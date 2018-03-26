@@ -11,6 +11,7 @@
 
 #include "ofMain.h"
 
+//used in Tile Cutter
 class TileInfo{
 public:
     

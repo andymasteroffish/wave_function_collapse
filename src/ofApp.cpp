@@ -17,6 +17,7 @@ void ofApp::setup(){
     
     rootMove = new CheckPoint(NULL);
     
+    //testing
     if (false){
         tileCutter.cut();
         tileCutter.setData(sourceTiles, sourceImage, sourceCols, sourceRows, tileSize);
@@ -289,18 +290,18 @@ vector<NeighborInfo> ofApp::getTileChoicesWithFreq(int col, int row){
         }
     }
     
-    //multiply them bu the weight and then give them all at least 1 frequency
-     for (int i=0; i<tileChoices.size(); i++){
-         tileChoices[i].freq *= freqWeight;
-         tileChoices[i].freq += 1;
-     }
-    
     //check the tile to our west
     if (col > 0){
         if (outputImage[col-1][row].state == STATE_SET){
             int thisID = outputImage[col-1][row].setID;
             sourceTiles[thisID].addNeighborFreq(1, tileChoices);
         }
+    }
+    
+    //multiply them by the weight and then give them all at least 1 frequency
+    for (int i=0; i<tileChoices.size(); i++){
+        tileChoices[i].freq *= freqWeight;
+        tileChoices[i].freq += 1;
     }
     
     //testing

@@ -44,7 +44,7 @@ void PotentialTile::ruleOutBasedOnNeightbor(Tile other, int dirToCheck){
         goodIDs.push_back(other.neighbors[dirToCheck][i].idNum);
     }
     
-    //go though and rmeove any IDs of mine that are not good IDs
+    //go though and remove any IDs of mine that are not good IDs
     for (int i=potentialIDs.size()-1; i>=0; i--){
         bool isGood = false;
         for (int k=0; k<goodIDs.size(); k++){
